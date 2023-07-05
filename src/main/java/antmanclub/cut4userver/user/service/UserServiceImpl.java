@@ -1,5 +1,6 @@
 package antmanclub.cut4userver.user.service;
 
+import antmanclub.cut4userver.SecurityConfig;
 import antmanclub.cut4userver.user.controller.LoginForm;
 import antmanclub.cut4userver.user.domain.User;
 import antmanclub.cut4userver.user.dto.JoinDto;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @Transactional
 public class UserServiceImpl implements UserService{
 
+    private final SecurityConfig securityConfig = new SecurityConfig();
     private final UserRepository userRepository;
 
     public UserServiceImpl(UserRepository userRepository) {
@@ -28,9 +30,11 @@ public class UserServiceImpl implements UserService{
         validateDuplicateUser(joinDto.getEmail());
         confirmPassword(joinDto.getPassword(), joinDto.getConfirmPassword());
 
+        String encodePw = securityConfig.getPasswordEncoder().encode(joinDto.getPassword());
+
         User user = new User();
         user.setEmail(joinDto.getEmail());
-        user.setPassword(joinDto.getPassword());
+        user.setPassword(encodePw);
         user.setName(joinDto.getName());
         user.setProfileimg("imgSrc");
         userRepository.save(user);
@@ -64,7 +68,7 @@ public class UserServiceImpl implements UserService{
 
     private void checkPassword(LoginDto loginDto){
         userRepository.findByEmail(loginDto.getEmail()).ifPresent(m ->{
-            if(!Objects.equals(loginDto.getPassword(), m.getPassword())){
+            if(!securityConfig.getPasswordEncoder().matches(loginDto.getPassword(), m.getPassword())){
                 throw new IllegalStateException("비밀번호가 틀렸습니다.");
             }
         });
