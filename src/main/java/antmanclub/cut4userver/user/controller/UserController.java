@@ -29,12 +29,7 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(JoinForm form){
-        JoinDto joinDto = new JoinDto();
-        joinDto.setEmail(form.getJoinEmail());
-        joinDto.setPassword(form.getJoinPassword());
-        joinDto.setConfirmPassword(form.getJoinConfirmPassword());
-        joinDto.setName(form.getJoinName());
+    public String join(JoinDto joinDto){
         userService.join(joinDto);
 
         return "redirect:/";
@@ -46,10 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public String login(LoginForm form){
-        LoginDto loginDto = new LoginDto();
-        loginDto.setEmail(form.getLoginEmail());
-        loginDto.setPassword(form.getLoginPassword());
+    public String login(LoginDto loginDto){
         userService.login(loginDto);
 
         return "redirect:/";
