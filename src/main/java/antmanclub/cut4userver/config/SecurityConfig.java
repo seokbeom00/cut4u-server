@@ -1,4 +1,4 @@
-package antmanclub.cut4userver;
+package antmanclub.cut4userver.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

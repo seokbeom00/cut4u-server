@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface UserService {
     UserDto join(JoinDto joinDto);
     UserDto login(LoginDto loginDto);
+    UserDto editProfile(UserDto userDto);
     Optional<User> findOne(String name);
 }

@@ -1,4 +1,4 @@
-package antmanclub.cut4userver;
+package antmanclub.cut4userver.config;
 
 import antmanclub.cut4userver.user.repository.UserRepository;
 import antmanclub.cut4userver.user.service.UserServiceImpl;

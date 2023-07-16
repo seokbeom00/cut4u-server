@@ -151,6 +151,66 @@ class UserServiceImplIntegrationTest {
     }
 
     @Test
+    void 프로필_수정(){
+        //given
+        JoinDto joinUser = new JoinDto();
+        joinUser.setEmail("asdf@naver.com");
+        joinUser.setPassword("asdf");
+        joinUser.setConfirmPassword("asdf");
+        joinUser.setName("name");
+        UserDto savedUser = userService.join(joinUser);
+
+        String newName = "newName";
+        String newImg = "newImgSrc";
+
+        UserDto userDto = new UserDto();
+        userDto.setEmail(savedUser.getEmail());
+        userDto.setName(newName);
+        userDto.setProfileimg(newImg);
+
+
+        // when
+        UserDto editedUser = userService.editProfile(userDto);
+
+
+        // then
+        User findUser = userService.findOne(editedUser.getName()).get();
+        Assertions.assertThat(editedUser.getName()).isEqualTo(newName);
+        Assertions.assertThat(editedUser.getEmail()).isEqualTo(userDto.getEmail());
+        Assertions.assertThat(editedUser.getProfileimg()).isEqualTo(newImg);
+    }
+
+    @Test
+    void 프로필_수정_이름중복(){
+        //given
+        JoinDto joinUser = new JoinDto();
+        joinUser.setEmail("asdf@naver.com");
+        joinUser.setPassword("asdf");
+        joinUser.setConfirmPassword("asdf");
+        joinUser.setName("name");
+        UserDto savedUser1 = userService.join(joinUser);
+
+        joinUser.setEmail("qwer@naver.com");
+        joinUser.setPassword("asdf");
+        joinUser.setConfirmPassword("asdf");
+        joinUser.setName("name2");
+        UserDto savedUser2 = userService.join(joinUser);
+
+        String newName = "name";
+
+        UserDto userDto = new UserDto();
+        userDto.setEmail(savedUser2.getEmail());
+        userDto.setName(newName);
+
+        // when
+        IllegalStateException e= org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class, () -> userService.editProfile(userDto));
+
+        // then
+        assertThat(e.getMessage()).isEqualTo("이미 존재하는 이름입니다.");
+
+    }
+
+    @Test
     void findOne() {
     }
 }
