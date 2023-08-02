@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @Entity
@@ -23,21 +26,21 @@ public class Posts extends BaseTimeEntity{
     @Column(nullable = false)
     private String frameImg;
 
+    private int likecount = 0;
+
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    private int likecount = 0;
-
-    @OneToMany(mappedBy = "image")
-    Image images;
+    @Column(name = "image_url", nullable = false)
+    @ElementCollection
+    private List<String> images = new ArrayList<>();
 
     @Builder
-    public Posts(String title, String content, String frameImg, Image images) {
+    public Posts(String title, String content, String frameImg) {
         this.title = title;
         this.content = content;
         this.frameImg = frameImg;
-        this.images = images;
     }
 
     public void addCount(){
@@ -45,5 +48,9 @@ public class Posts extends BaseTimeEntity{
     }
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setImages(List<String> images){
+        this.images = images;
     }
 }
