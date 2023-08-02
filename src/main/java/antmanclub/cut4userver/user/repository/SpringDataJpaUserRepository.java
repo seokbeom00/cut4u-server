@@ -11,7 +11,4 @@ public interface SpringDataJpaUserRepository extends JpaRepository<User, Long>, 
     Optional<User> findByEmail(String email);
     @Override
     Optional<User> findByName(String name);
-
-
-
 }
