@@ -19,5 +19,4 @@ public class SpringConfig {
     public UserServiceImpl userService() {
         return new UserServiceImpl(userRepository);
     }
-
 }
