@@ -1,6 +1,7 @@
 package antmanclub.cut4userver.posts.domain;
 
 import antmanclub.cut4userver.comment.domain.Comment;
+import antmanclub.cut4userver.likes.domain.Likes;
 import antmanclub.cut4userver.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -43,6 +44,9 @@ public class Posts extends BaseTimeEntity{
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    private List<Likes> likes = new ArrayList<>();
+
     @Builder
     public Posts(String title, String content, String frameImg) {
         this.title = title;
@@ -59,5 +63,9 @@ public class Posts extends BaseTimeEntity{
 
     public void setImages(List<String> images){
         this.images = images;
+    }
+
+    public void addComment(Comment comment){
+        this.comments.add(comment);
     }
 }

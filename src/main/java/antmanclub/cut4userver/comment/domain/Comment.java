@@ -3,6 +3,7 @@ package antmanclub.cut4userver.comment.domain;
 import antmanclub.cut4userver.posts.domain.Posts;
 import antmanclub.cut4userver.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,16 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "USER_ID")
     private User user;
+
+    @Builder
+    public Comment(Comment parentComment, Posts posts, User user){
+        this.parentComment = parentComment;
+        this.post = posts;
+        this.user = user;
+    }
+
+    //답글 추가될 때 리스트에 add
+    public void addReplyComments(Comment replyComment) {
+        this.replyComments.add(replyComment);
+    }
 }

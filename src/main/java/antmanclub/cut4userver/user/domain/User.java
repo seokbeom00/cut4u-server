@@ -2,7 +2,9 @@ package antmanclub.cut4userver.user.domain;
 
 
 import antmanclub.cut4userver.comment.domain.Comment;
+import antmanclub.cut4userver.likes.domain.Likes;
 import antmanclub.cut4userver.posts.domain.Posts;
+import antmanclub.cut4userver.posts.domain.PostsHashtag;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,4 +37,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Likes> likes = new ArrayList<>();
 }
