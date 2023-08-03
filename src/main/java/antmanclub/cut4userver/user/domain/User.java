@@ -2,6 +2,7 @@ package antmanclub.cut4userver.user.domain;
 
 
 import antmanclub.cut4userver.comment.domain.Comment;
+import antmanclub.cut4userver.follow.domain.Follow;
 import antmanclub.cut4userver.likes.domain.Likes;
 import antmanclub.cut4userver.posts.domain.Posts;
 import antmanclub.cut4userver.posts.domain.PostsHashtag;
@@ -40,4 +41,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Likes> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower")
+    private List<Follow> following = new ArrayList<>();
+
+    @OneToMany(mappedBy = "followee")
+    private List<Follow> followers = new ArrayList<>();
 }
