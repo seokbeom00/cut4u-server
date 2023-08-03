@@ -1,10 +1,14 @@
 package antmanclub.cut4userver.user.domain;
 
 
+import antmanclub.cut4userver.comment.domain.Comment;
+import antmanclub.cut4userver.posts.domain.Posts;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -25,4 +29,10 @@ public class User {
     private String name;
 
     private String profileimg;
+
+    @OneToMany(mappedBy = "user")
+    private List<Posts> postsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
 }

@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -14,10 +17,13 @@ public class Hashtag {
     private Long id;
 
     @Column(length = 200, nullable = false)
-    private String tagname;
+    private String hashtag;
+
+    @OneToMany(mappedBy = "hashtag")
+    private List<PostsHashtag> postsHashtags = new ArrayList<>();
 
     @Builder
-    public Hashtag(String tagname){
-        this.tagname = tagname;
+    public Hashtag(String hashtag){
+        this.hashtag = hashtag;
     }
 }
