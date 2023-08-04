@@ -19,13 +19,14 @@ import java.io.IOException;
 
 @Controller
 public class UserController {
-
+    //사실 쓰는 거였어..
     private final UserServiceImpl userService;
     private final AwsUpload awsUpload;
 
 
     @Autowired
     public UserController(UserServiceImpl userService, AwsUpload awsUpload) {
+        //사실 쓰는 거였어..
         this.userService = userService;
         this.awsUpload = awsUpload;
     }
@@ -62,6 +63,7 @@ public class UserController {
     @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
     @PostMapping(value="/user/edit",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String saveDiary(HttpServletRequest request, @RequestParam(value="image") MultipartFile image, UserDto userDto) throws IOException {
+        //사실 쓰는 거였어..
         String imgSrc = awsUpload.upload(image, "image");
         userDto.setProfileimg(imgSrc);
         userService.editProfile(userDto);

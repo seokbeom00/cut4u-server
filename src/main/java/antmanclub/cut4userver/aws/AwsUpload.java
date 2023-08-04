@@ -13,7 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class AwsUpload {
-
+    //사실 쓰는 거였어..
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
