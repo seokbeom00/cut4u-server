@@ -24,6 +24,7 @@ class UserServiceImplIntegrationTest {
     @Autowired UserRepository userRepository;
 
     @Test
+    @Commit
     void join() {
         //given
         JoinDto user = new JoinDto();
