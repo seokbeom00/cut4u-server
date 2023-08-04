@@ -17,6 +17,7 @@ public class AwsUpload {
     private String bucket;
 
     private final AmazonS3 amazonS3;
+    //흠 저에요
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         String s3FileName = dirName + "/" + UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
