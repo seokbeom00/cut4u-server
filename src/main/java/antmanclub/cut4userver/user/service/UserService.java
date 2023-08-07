@@ -3,14 +3,13 @@ package antmanclub.cut4userver.user.service;
 import antmanclub.cut4userver.config.SecurityConfig;
 import antmanclub.cut4userver.user.SemiToken.CurrentUser;
 import antmanclub.cut4userver.user.domain.User;
+import antmanclub.cut4userver.user.dto.JoinRequestDto;
 import antmanclub.cut4userver.user.dto.LoginRequestDto;
-import antmanclub.cut4userver.user.dto.LoginResponseDto;
+import antmanclub.cut4userver.user.dto.SuccessResponseDto;
 import antmanclub.cut4userver.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +18,7 @@ public class UserService {
     private final SecurityConfig securityConfig = new SecurityConfig();;
 
     @Transactional
-    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+    public SuccessResponseDto login(LoginRequestDto loginRequestDto) {
         userRepository.findByEmail(loginRequestDto.getEmail()).ifPresent(m -> {
             if(!securityConfig.getPasswordEncoder().matches(loginRequestDto.getPassword(), m.getPassword())){
                 throw new IllegalStateException("비밀번호가 틀렸습니다");
@@ -31,6 +30,10 @@ public class UserService {
         CurrentUser currentUser = new CurrentUser();
         currentUser.setEmail(user.getEmail());
         currentUser.setName(user.getName());
-        return LoginResponseDto.builder().success(true).build();
+        return SuccessResponseDto.builder().success(true).build();
+    }
+
+    public SuccessResponseDto join(JoinRequestDto requestDto) {
+
     }
 }
