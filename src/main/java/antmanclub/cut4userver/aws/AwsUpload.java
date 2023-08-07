@@ -1,6 +1,5 @@
 package antmanclub.cut4userver.aws;
 
-import antmanclub.cut4userver.user.dto.UserDto;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
