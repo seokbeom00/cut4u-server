@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -34,6 +36,26 @@ public class UserService {
     }
 
     public SuccessResponseDto join(JoinRequestDto requestDto) {
-
+        userRepository.findByName(requestDto.getName()).ifPresent(m -> {
+            throw new IllegalStateException("이미 존재하는 이름입니다.");
+        });
+        userRepository.findByEmail(requestDto.getEmail()).ifPresent(m -> {
+            throw new IllegalStateException("이미 존재하는 회원입니다.");
+        });
+        if (!Objects.equals(requestDto.getPassword(), requestDto.getConfirmPassword())) {
+            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+        }
+        String encodePw = securityConfig.getPasswordEncoder().encode(requestDto.getPassword());
+        User user = new User();
+        user.setEmail(requestDto.getEmail());
+        user.setPassword(encodePw);
+        try {
+            user.setName(requestDto.getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        user.setProfileimg(""); //나중에 기본 이미지로 바꿔줘야함
+        userRepository.save(user);
+        return SuccessResponseDto.builder().success(true).build();
     }
 }
