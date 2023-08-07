@@ -1,4 +1,4 @@
-package antmanclub.cut4userver.user.dto;
+package antmanclub.cut4userver.user.dto.TsDto;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDto {
+public class JoinDto {
     private String email;
     private String password;
+    private String confirmPassword;
+    private String name;
 }
