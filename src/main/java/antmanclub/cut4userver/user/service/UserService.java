@@ -56,4 +56,12 @@ public class UserService {
         userRepository.save(user);
         return SuccessResponseDto.builder().success(true).build();
     }
+
+    @Transactional
+    public SuccessResponseDto emailDupleCheck(String email) {
+        userRepository.findByEmail(email).ifPresent(m -> {
+            throw new IllegalArgumentException("중복된 이메일이 있습니다.");
+        });
+        return SuccessResponseDto.builder().success(true).build();
+    }
 }

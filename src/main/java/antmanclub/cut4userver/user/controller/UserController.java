@@ -23,4 +23,9 @@ public class UserController {
     public SuccessResponseDto join(@RequestBody JoinRequestDto requestDto){
         return userService.join(requestDto);
     }
+
+    @GetMapping("/user/duplecheck/{email}")
+    public SuccessResponseDto emailDupleCheck(@PathVariable String email){
+        return userService.emailDupleCheck(email);
+    }
 }

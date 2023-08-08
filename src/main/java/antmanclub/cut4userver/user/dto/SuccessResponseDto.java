@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class SuccessResponseDto {
-    private Boolean loginSuccess;
+    private Boolean Success;
 
     @Builder
     public SuccessResponseDto(Boolean success){
-        this.loginSuccess = success;
+        this.Success = success;
     }
 }
