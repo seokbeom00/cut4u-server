@@ -3,9 +3,7 @@ package antmanclub.cut4userver.user.service;
 import antmanclub.cut4userver.config.SecurityConfig;
 import antmanclub.cut4userver.user.SemiToken.CurrentUser;
 import antmanclub.cut4userver.user.domain.User;
-import antmanclub.cut4userver.user.dto.JoinRequestDto;
-import antmanclub.cut4userver.user.dto.LoginRequestDto;
-import antmanclub.cut4userver.user.dto.SuccessResponseDto;
+import antmanclub.cut4userver.user.dto.*;
 import antmanclub.cut4userver.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,5 +61,21 @@ public class UserService {
             throw new IllegalArgumentException("중복된 이메일이 있습니다.");
         });
         return SuccessResponseDto.builder().success(true).build();
+    }
+
+    @Transactional
+    public UserProfileUpdateResponseDto editProfile(UserProfileUpdateRequestDto userProfileUpdateRequestDto) {
+        userRepository.findByName(userProfileUpdateRequestDto.getName())
+                .ifPresent(m -> {
+                    throw new IllegalArgumentException("이미 있는 이름입니다.");
+                });
+        User user = userRepository.findByEmail(userProfileUpdateRequestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("해당 이에일을 가진 유저가 없습니다"));
+        user.setName(userProfileUpdateRequestDto.getName());
+        user.setProfileimg(userProfileUpdateRequestDto.getProfileimg());
+        return UserProfileUpdateResponseDto.builder()
+                .name(userProfileUpdateRequestDto.getName())
+                .profileimg(userProfileUpdateRequestDto.getProfileimg())
+                .build();
     }
 }

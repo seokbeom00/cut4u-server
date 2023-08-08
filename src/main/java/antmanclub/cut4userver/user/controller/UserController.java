@@ -1,12 +1,14 @@
 package antmanclub.cut4userver.user.controller;
 
 import antmanclub.cut4userver.aws.AwsUpload;
-import antmanclub.cut4userver.user.dto.JoinRequestDto;
-import antmanclub.cut4userver.user.dto.LoginRequestDto;
-import antmanclub.cut4userver.user.dto.SuccessResponseDto;
+import antmanclub.cut4userver.user.dto.*;
 import antmanclub.cut4userver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,5 +29,18 @@ public class UserController {
     @GetMapping("/user/duplecheck/{email}")
     public SuccessResponseDto emailDupleCheck(@PathVariable String email){
         return userService.emailDupleCheck(email);
+    }
+
+    @PatchMapping(path="/user/editProfile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UserProfileUpdateResponseDto editProfile(@RequestParam(value="image") MultipartFile image,
+                                                    @RequestParam(value="name") String name,
+                                                    @RequestParam(value = "email") String email)
+            throws IOException {
+        String imgSrc = awsUpload.upload(image, "image");
+        return userService.editProfile(UserProfileUpdateRequestDto.builder()
+                .name(name)
+                .email(email)
+                .profileimg(imgSrc)
+                .build());
     }
 }
