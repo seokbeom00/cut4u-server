@@ -15,12 +15,12 @@ public class UserController {
     private final AwsUpload awsUpload;
 
     @PostMapping("/user/login")
-    public SuccessResponseDto login(LoginRequestDto loginRequestDto){
+    public SuccessResponseDto login(@RequestBody LoginRequestDto loginRequestDto){
         return userService.login(loginRequestDto);
     }
 
     @PostMapping("/user/join")
-    public SuccessResponseDto join(JoinRequestDto requestDto){
+    public SuccessResponseDto join(@RequestBody JoinRequestDto requestDto){
         return userService.join(requestDto);
     }
 }
