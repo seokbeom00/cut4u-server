@@ -116,4 +116,16 @@ public class UserService {
         followRepository.delete(follow);
         return SuccessResponseDto.builder().success(true).build();
     }
+
+    public List<FollowingListResponseDto> followingList(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다."));
+        List<User> followerUsers = user.getFollowers().stream()
+                .map(Follow::getFollower)
+                .toList();
+        System.out.println(followerUsers);
+        return followerUsers.stream()
+                .map(FollowingListResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }

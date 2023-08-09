@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,5 +53,10 @@ public class UserController {
     @DeleteMapping("/user/unfollow")
     public SuccessResponseDto userUnfollow(@RequestBody UserFollowRequestDto userFollowRequestDto){
         return userService.userUnfollow(userFollowRequestDto);
+    }
+
+    @GetMapping("/user/following/list/{userId}")
+    public List<FollowingListResponseDto> followingList(@PathVariable Long userId){
+        return userService.followingList(userId);
     }
 }
