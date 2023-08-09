@@ -2,12 +2,14 @@ package antmanclub.cut4userver.follow.domain;
 
 import antmanclub.cut4userver.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@Setter
 public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

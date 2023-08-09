@@ -45,4 +45,12 @@ public class User {
 
     @OneToMany(mappedBy = "followee")
     private List<Follow> followers = new ArrayList<>();
+
+    public void addFollowing(Follow follow){
+        following.add(follow);
+    }
+
+    public void addFollower(Follow follow){
+        followers.add(follow);
+    }
 }
