@@ -1,8 +1,11 @@
 package antmanclub.cut4userver.posts.service;
 
 import antmanclub.cut4userver.aws.AwsUpload;
+import antmanclub.cut4userver.posts.domain.Hashtag;
 import antmanclub.cut4userver.posts.domain.Posts;
+import antmanclub.cut4userver.posts.domain.PostsHashtag;
 import antmanclub.cut4userver.posts.dto.PostsAddRequestDto;
+import antmanclub.cut4userver.posts.dto.PostsDto;
 import antmanclub.cut4userver.posts.dto.PostsListResponseDto;
 import antmanclub.cut4userver.posts.repository.HashtagRepository;
 import antmanclub.cut4userver.posts.repository.PostsHashtagRepository;
@@ -17,8 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -57,13 +63,46 @@ public class PostsService {
         posts.setFrameImg(postsAddRequestDto.getFrameImg());
         posts.setImages(imageUrls);
         posts.setUser(user);
+        postsRepository.save(posts);
+        user.addPosts(posts);
 
+        // hashtag repository insert
+        List<String> hashtagNames = postsAddRequestDto.getHashtags();
+        hashtagNames.stream().forEach(hashtagName -> {
+            Hashtag hashtag = hashtagRepository.findByHashtag(hashtagName)
+                    .orElseGet(() -> {
+                        Hashtag newHashtag = new Hashtag(hashtagName);
+                        return hashtagRepository.save(newHashtag);
+                    });
 
-        // posts-hashtag repository insert
+            // posts-hashtag repository insert
+            PostsHashtag postsHashtag = new PostsHashtag(posts, hashtag);
+            postsHashtagRepository.save(postsHashtag);
+        });
 
+        // get postslist by user's following users
+        List<Posts> postsList = new ArrayList<>();
+        user.getFollowing().stream().forEach(follow -> {
+            Collections.addAll(postsList, follow.getFollowee().getPostsList().toArray(new Posts[0]));
+        });
+        List<PostsDto> postsDtoList = postsList.stream()
+                .map(post -> PostsDto.builder()
+                        .userId(posts.getUser().getId())
+                        .userName(posts.getUser().getName())
+                        .profileImg(posts.getUser().getProfileimg())
+                        .postsId(posts.getId())
+                        .title(posts.getTitle())
+                        .content(posts.getContent())
+                        .frameImg(posts.getFrameImg())
+                        .Hashtags(posts.getPostsHashtags().stream().map(postsHashtag -> {
+                            return postsHashtag.getHashtag().getHashtag();
+                        }).collect(Collectors.toList()))
+                        .build()
+                )
+                .collect(Collectors.toList());
 
+        PostsListResponseDto postsListResponseDto = new PostsListResponseDto(postsDtoList);
 
-
-        return null;
+        return postsListResponseDto;
     }
 }
