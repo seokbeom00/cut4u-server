@@ -48,4 +48,9 @@ public class UserController {
     public SuccessResponseDto userFollow(@RequestBody UserFollowRequestDto userFollowRequestDto){
         return userService.userFollow(userFollowRequestDto);
     }
+
+    @DeleteMapping("/user/unfollow")
+    public SuccessResponseDto userUnfollow(@RequestBody UserFollowRequestDto userFollowRequestDto){
+        return userService.userUnfollow(userFollowRequestDto);
+    }
 }

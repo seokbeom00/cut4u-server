@@ -104,4 +104,16 @@ public class UserService {
         followingUser.addFollowing(follow);
         return SuccessResponseDto.builder().success(true).build();
     }
+
+    public SuccessResponseDto userUnfollow(UserFollowRequestDto userFollowRequestDto) {
+        User user = userRepository.findByEmail(currentUser.getEmail())
+                .orElseThrow(()-> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));
+        User followingUser = userRepository.findById(userFollowRequestDto.getId())
+                .orElseThrow(()-> new IllegalArgumentException("해당 id의 유저가 존재하지 않습니다."));
+        Follow follow = new Follow();
+        follow = followRepository.findByFolloweeAndFollower(user, followingUser)
+                .orElseThrow(()-> new IllegalArgumentException("팔로우 하지 않은 사용자입니다."));
+        followRepository.delete(follow);
+        return SuccessResponseDto.builder().success(true).build();
+    }
 }
