@@ -60,7 +60,7 @@ public class UserController {
         return userService.followingList(userId);
     }
 
-    @GetMapping("/usrer/follower/list/{userId}")
+    @GetMapping("/user/follower/list/{userId}")
     public List<FollowerListResponseDto> followerList(@PathVariable Long userId){
         return userService.followerList(userId);
     }
