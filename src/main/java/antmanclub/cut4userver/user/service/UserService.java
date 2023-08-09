@@ -113,6 +113,9 @@ public class UserService {
                 .orElseThrow(()-> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));
         User followingUser = userRepository.findById(userFollowRequestDto.getId())
                 .orElseThrow(()-> new IllegalArgumentException("해당 id의 유저가 존재하지 않습니다."));
+        if (user.getId().equals(followingUser.getId())) {
+            throw new IllegalStateException("같은 유저는 언팔할 수 없습니다.");
+        }
         Follow follow = new Follow();
         follow = followRepository.findByFolloweeAndFollower(user, followingUser)
                 .orElseThrow(()-> new IllegalArgumentException("팔로우 하지 않은 사용자입니다."));
