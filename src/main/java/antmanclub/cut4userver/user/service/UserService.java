@@ -129,9 +129,19 @@ public class UserService {
         List<User> followerUsers = user.getFollowers().stream()
                 .map(Follow::getFollower)
                 .toList();
-        System.out.println(followerUsers);
         return followerUsers.stream()
                 .map(FollowingListResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<FollowerListResponseDto> followerList(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다."));
+        List<User> followingUsers = user.getFollowing().stream()
+                .map(Follow::getFollowee)
+                .toList();
+        return followingUsers.stream()
+                .map(FollowerListResponseDto::new)
                 .collect(Collectors.toList());
     }
 }

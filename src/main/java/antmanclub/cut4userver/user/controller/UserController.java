@@ -59,4 +59,9 @@ public class UserController {
     public List<FollowingListResponseDto> followingList(@PathVariable Long userId){
         return userService.followingList(userId);
     }
+
+    @GetMapping("/usrer/follower/list/{userId}")
+    public List<FollowerListResponseDto> followerList(@PathVariable Long userId){
+        return userService.followerList(userId);
+    }
 }
