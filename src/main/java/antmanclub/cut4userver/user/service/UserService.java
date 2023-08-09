@@ -1,6 +1,8 @@
 package antmanclub.cut4userver.user.service;
 
 import antmanclub.cut4userver.config.SecurityConfig;
+import antmanclub.cut4userver.follow.domain.Follow;
+import antmanclub.cut4userver.follow.repository.FollowRepository;
 import antmanclub.cut4userver.user.SemiToken.CurrentUser;
 import antmanclub.cut4userver.user.domain.User;
 import antmanclub.cut4userver.user.dto.*;
@@ -9,13 +11,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final SecurityConfig securityConfig = new SecurityConfig();;
+    private final SecurityConfig securityConfig = new SecurityConfig();
+    private final CurrentUser currentUser;
+    private final FollowRepository followRepository;
 
     @Transactional
     public SuccessResponseDto login(LoginRequestDto loginRequestDto) {
@@ -27,9 +33,8 @@ public class UserService {
         //비밀번호가 맞으면 해당 이메일은 고유하므로 로그인 성공
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow(()-> new IllegalArgumentException("해당 유저가 없습니다"));
-        CurrentUser currentUser = new CurrentUser();
-        currentUser.setEmail(user.getEmail());
         currentUser.setName(user.getName());
+        currentUser.setEmail(user.getEmail());
         return SuccessResponseDto.builder().success(true).build();
     }
 
@@ -77,5 +82,26 @@ public class UserService {
                 .name(userProfileUpdateRequestDto.getName())
                 .profileimg(userProfileUpdateRequestDto.getProfileimg())
                 .build();
+    }
+
+    @Transactional
+    public SuccessResponseDto userFollow(UserFollowRequestDto userFollowRequestDto) {
+        User user = userRepository.findByEmail(currentUser.getEmail())
+                .orElseThrow(()-> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));
+        User followingUser = userRepository.findById(userFollowRequestDto.getId())
+                .orElseThrow(()-> new IllegalArgumentException("해당 id의 유저가 존재하지 않습니다."));
+        Follow follow = new Follow();
+        follow.setFollowee(user);
+        follow.setFollower(followingUser);
+        followRepository.findByFolloweeAndFollower(user, followingUser)
+                .ifPresent(m -> {
+                    throw new IllegalArgumentException("이미 팔로우한 사용자 입니다.");
+                });
+        followRepository.save(follow);
+        user.addFollowing(follow);
+        user.addFollower(follow);
+        followingUser.addFollower(follow);
+        followingUser.addFollowing(follow);
+        return SuccessResponseDto.builder().success(true).build();
     }
 }

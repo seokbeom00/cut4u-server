@@ -2,6 +2,7 @@ package antmanclub.cut4userver.user.SemiToken;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

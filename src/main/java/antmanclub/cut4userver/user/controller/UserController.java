@@ -43,4 +43,9 @@ public class UserController {
                 .profileimg(imgSrc)
                 .build());
     }
+
+    @PostMapping("/user/follow")
+    public SuccessResponseDto userFollow(@RequestBody UserFollowRequestDto userFollowRequestDto){
+        return userService.userFollow(userFollowRequestDto);
+    }
 }
