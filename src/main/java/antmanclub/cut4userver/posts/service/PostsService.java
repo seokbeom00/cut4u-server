@@ -1,23 +1,66 @@
 package antmanclub.cut4userver.posts.service;
 
+import antmanclub.cut4userver.aws.AwsUpload;
 import antmanclub.cut4userver.posts.domain.Posts;
 import antmanclub.cut4userver.posts.dto.PostsAddRequestDto;
 import antmanclub.cut4userver.posts.dto.PostsListResponseDto;
+import antmanclub.cut4userver.posts.repository.HashtagRepository;
+import antmanclub.cut4userver.posts.repository.PostsHashtagRepository;
 import antmanclub.cut4userver.posts.repository.PostsRepository;
+import antmanclub.cut4userver.user.SemiToken.CurrentUser;
+import antmanclub.cut4userver.user.domain.User;
+import antmanclub.cut4userver.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PostsService {
+    private final UserRepository userRepository;
     private final PostsRepository postsRepository;
+    private final HashtagRepository hashtagRepository;
+    private final PostsHashtagRepository postsHashtagRepository;
+    private final CurrentUser currentUser;
+    private final AwsUpload awsUpload;
 
     @Transactional
-    public PostsListResponseDto add(PostsAddRequestDto postsAddRequestDto) {
+    public PostsListResponseDto add(List<MultipartFile> images, PostsAddRequestDto postsAddRequestDto) {
+        // uploads images into aws and get urls
+        if(images.size() != 4){
+            throw new IllegalArgumentException("사진의 개수가 4개가 아닙니다.");
+        }
+        List<String> imageUrls = images.stream()
+                .map(image -> {
+                    try {
+                        return awsUpload.upload(image, "image");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        // user entity genarate
+        User user = userRepository.findByEmail(currentUser.getEmail())
+                .orElseThrow(()-> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));;
+
+        // posts entity genarate
         Posts posts = new Posts();
         posts.setTitle(postsAddRequestDto.getTitle());
         posts.setContent(postsAddRequestDto.getContent());
+        posts.setFrameImg(postsAddRequestDto.getFrameImg());
+        posts.setImages(imageUrls);
+        posts.setUser(user);
+
+
+        // posts-hashtag repository insert
+
 
 
 
