@@ -36,6 +36,22 @@ public class PostsService {
     private final CurrentUser currentUser;
     private final AwsUpload awsUpload;
 
+    public PostsListResponseDto feed() {
+        User user = userRepository.findByEmail(currentUser.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));
+
+        // get postslist by user's following users
+        List<Posts> postsList = new ArrayList<>();
+        user.getFollowers().stream().forEach(follow -> {
+            Collections.addAll(postsList, follow.getFollower().getPostsList().toArray(new Posts[0]));
+        });
+        List<PostsDto> postsDtoList = postsListToPostsDtoList(postsList);    // postsList to postsDtoList
+
+        PostsListResponseDto postsListResponseDto = new PostsListResponseDto(postsDtoList);
+
+        return postsListResponseDto;
+    }
+
     @Transactional
     public PostsListResponseDto add(List<MultipartFile> images, PostsAddRequestDto postsAddRequestDto) {
         // uploads images into aws and get urls
@@ -82,27 +98,57 @@ public class PostsService {
 
         // get postslist by user's following users
         List<Posts> postsList = new ArrayList<>();
-        user.getFollowing().stream().forEach(follow -> {
-            Collections.addAll(postsList, follow.getFollowee().getPostsList().toArray(new Posts[0]));
+        user.getFollowers().stream().forEach(follow -> {
+            Collections.addAll(postsList, follow.getFollower().getPostsList().toArray(new Posts[0]));
         });
+        List<PostsDto> postsDtoList = postsListToPostsDtoList(postsList);    // postsList to postsDtoList
+
+        PostsListResponseDto postsListResponseDto = new PostsListResponseDto(postsDtoList);
+
+        return postsListResponseDto;
+    }
+
+    @Transactional
+    public PostsListResponseDto delete(Long postsId) {
+        // delete posts in posts repository
+        Posts deletePosts = postsRepository.findById(postsId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+        postsRepository.delete(deletePosts);
+
+        // delete posts-hashtag mapping
+        postsHashtagRepository.deleteByPostsId(postsId);
+
+        User user = userRepository.findByEmail(currentUser.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));
+
+        // get postslist by user's following users
+        List<Posts> postsList = new ArrayList<>();
+        user.getFollowers().stream().forEach(follow -> {
+            Collections.addAll(postsList, follow.getFollower().getPostsList().toArray(new Posts[0]));
+        });
+        List<PostsDto> postsDtoList = postsListToPostsDtoList(postsList);    // postsList to postsDtoList
+
+        PostsListResponseDto postsListResponseDto = new PostsListResponseDto(postsDtoList);
+
+        return postsListResponseDto;
+    }
+
+    public List<PostsDto> postsListToPostsDtoList(List<Posts> postsList){
         List<PostsDto> postsDtoList = postsList.stream()
                 .map(post -> PostsDto.builder()
-                        .userId(posts.getUser().getId())
-                        .userName(posts.getUser().getName())
-                        .profileImg(posts.getUser().getProfileimg())
-                        .postsId(posts.getId())
-                        .title(posts.getTitle())
-                        .content(posts.getContent())
-                        .frameImg(posts.getFrameImg())
-                        .Hashtags(posts.getPostsHashtags().stream().map(postsHashtag -> {
+                        .userId(post.getUser().getId())
+                        .userName(post.getUser().getName())
+                        .profileImg(post.getUser().getProfileimg())
+                        .postsId(post.getId())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .frameImg(post.getFrameImg())
+                        .Hashtags(post.getPostsHashtags().stream().map(postsHashtag -> {
                             return postsHashtag.getHashtag().getHashtag();
                         }).collect(Collectors.toList()))
                         .build()
                 )
                 .collect(Collectors.toList());
-
-        PostsListResponseDto postsListResponseDto = new PostsListResponseDto(postsDtoList);
-
-        return postsListResponseDto;
+        return postsDtoList;
     }
 }
