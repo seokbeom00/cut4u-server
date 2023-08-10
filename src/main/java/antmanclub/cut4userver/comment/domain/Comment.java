@@ -32,6 +32,9 @@ public class Comment {
     @JoinColumn(name = "USER_ID")
     private User user;
 
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String comment;
+
     @Builder
     public Comment(Comment parentComment, Posts posts, User user){
         this.parentComment = parentComment;
