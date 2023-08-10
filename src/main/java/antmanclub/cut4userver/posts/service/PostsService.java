@@ -4,9 +4,7 @@ import antmanclub.cut4userver.aws.AwsUpload;
 import antmanclub.cut4userver.posts.domain.Hashtag;
 import antmanclub.cut4userver.posts.domain.Posts;
 import antmanclub.cut4userver.posts.domain.PostsHashtag;
-import antmanclub.cut4userver.posts.dto.PostsAddRequestDto;
-import antmanclub.cut4userver.posts.dto.PostsDto;
-import antmanclub.cut4userver.posts.dto.PostsListResponseDto;
+import antmanclub.cut4userver.posts.dto.*;
 import antmanclub.cut4userver.posts.repository.HashtagRepository;
 import antmanclub.cut4userver.posts.repository.PostsHashtagRepository;
 import antmanclub.cut4userver.posts.repository.PostsRepository;
@@ -15,7 +13,6 @@ import antmanclub.cut4userver.user.domain.User;
 import antmanclub.cut4userver.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -103,9 +99,7 @@ public class PostsService {
         });
         List<PostsDto> postsDtoList = postsListToPostsDtoList(postsList);    // postsList to postsDtoList
 
-        PostsListResponseDto postsListResponseDto = new PostsListResponseDto(postsDtoList);
-
-        return postsListResponseDto;
+        return new PostsListResponseDto(postsDtoList);
     }
 
     @Transactional
@@ -116,7 +110,7 @@ public class PostsService {
         postsRepository.delete(deletePosts);
 
         // delete posts-hashtag mapping
-        postsHashtagRepository.deleteByPostsId(postsId);
+        postsHashtagRepository.deleteByPost(deletePosts);
 
         User user = userRepository.findByEmail(currentUser.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));
@@ -128,13 +122,11 @@ public class PostsService {
         });
         List<PostsDto> postsDtoList = postsListToPostsDtoList(postsList);    // postsList to postsDtoList
 
-        PostsListResponseDto postsListResponseDto = new PostsListResponseDto(postsDtoList);
-
-        return postsListResponseDto;
+        return new PostsListResponseDto(postsDtoList);
     }
 
     public List<PostsDto> postsListToPostsDtoList(List<Posts> postsList){
-        List<PostsDto> postsDtoList = postsList.stream()
+        return postsList.stream()
                 .map(post -> PostsDto.builder()
                         .userId(post.getUser().getId())
                         .userName(post.getUser().getName())
@@ -149,6 +141,22 @@ public class PostsService {
                         .build()
                 )
                 .collect(Collectors.toList());
-        return postsDtoList;
+    }
+
+    public UserPostsListResponseDto userPostsList(String userEmail) {
+        // find user with userEmail
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        // create UserPostsListResponseDto
+
+        return UserPostsListResponseDto.builder()
+                .userId(user.getId())
+                .userName(user.getName())
+                .profileImg(user.getProfileimg())
+                .userPostsDtoList(user.getPostsList().stream()
+                        .map(UserPostsDto::new)
+                        .collect(Collectors.toList()))
+                .build();
     }
 }

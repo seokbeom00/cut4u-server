@@ -2,6 +2,7 @@ package antmanclub.cut4userver.posts.controller;
 
 import antmanclub.cut4userver.posts.dto.PostsAddRequestDto;
 import antmanclub.cut4userver.posts.dto.PostsListResponseDto;
+import antmanclub.cut4userver.posts.dto.UserPostsListResponseDto;
 import antmanclub.cut4userver.posts.service.PostsService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,10 @@ public class PostsController {
     @DeleteMapping("/delete")
     public PostsListResponseDto delete(@RequestParam(value="postsId") Long postsId){
         return postsService.delete(postsId);
+    }
+
+    @GetMapping("/{userEmail}")
+    public UserPostsListResponseDto userPostsList(@PathVariable(value = "userEmail") String userEmail){
+        return postsService.userPostsList(userEmail);
     }
 }
