@@ -107,17 +107,19 @@ public class PostsService {
         // delete posts in posts repository
         Posts deletePosts = postsRepository.findById(postsId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
-        postsRepository.delete(deletePosts);
-
         User user = userRepository.findByEmail(currentUser.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));
+        if(deletePosts.getUser().equals(user)){
+            postsRepository.delete(deletePosts);
+        }else{
+            throw new IllegalArgumentException("포스트에 대한 삭제 권한이 없습니다.");
+        }
         // get postslist by user's following users
         List<Posts> postsList = new ArrayList<>();
         user.getFollowers().stream().forEach(follow -> {
             Collections.addAll(postsList, follow.getFollower().getPostsList().toArray(new Posts[0]));
         });
         List<PostsDto> postsDtoList = postsListToPostsDtoList(postsList);    // postsList to postsDtoList
-
         return new PostsListResponseDto(postsDtoList);
     }
 
