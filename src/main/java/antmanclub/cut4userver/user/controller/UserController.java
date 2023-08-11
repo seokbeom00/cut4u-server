@@ -13,26 +13,27 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/user")
 public class UserController {
     private final UserService userService;
     private final AwsUpload awsUpload;
 
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     public SuccessResponseDto login(@RequestBody LoginRequestDto loginRequestDto){
         return userService.login(loginRequestDto);
     }
 
-    @PostMapping("/user/join")
+    @PostMapping("/join")
     public SuccessResponseDto join(@RequestBody JoinRequestDto requestDto){
         return userService.join(requestDto);
     }
 
-    @GetMapping("/user/duplecheck/{email}")
+    @GetMapping("/duplecheck/{email}")
     public SuccessResponseDto emailDupleCheck(@PathVariable String email){
         return userService.emailDupleCheck(email);
     }
 
-    @PatchMapping(path="/user/editProfile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(path="/editProfile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UserProfileUpdateResponseDto editProfile(@RequestParam(value="image") MultipartFile image,
                                                     @RequestParam(value="name") String name,
                                                     @RequestParam(value = "email") String email)
@@ -45,22 +46,22 @@ public class UserController {
                 .build());
     }
 
-    @PostMapping("/user/follow")
+    @PostMapping("/follow")
     public SuccessResponseDto userFollow(@RequestBody UserFollowRequestDto userFollowRequestDto){
         return userService.userFollow(userFollowRequestDto);
     }
 
-    @DeleteMapping("/user/unfollow")
+    @DeleteMapping("/unfollow")
     public SuccessResponseDto userUnfollow(@RequestBody UserFollowRequestDto userFollowRequestDto){
         return userService.userUnfollow(userFollowRequestDto);
     }
 
-    @GetMapping("/user/following/list/{userId}")
+    @GetMapping("/following/list/{userId}")
     public List<FollowingListResponseDto> followingList(@PathVariable Long userId){
         return userService.followingList(userId);
     }
 
-    @GetMapping("/user/follower/list/{userId}")
+    @GetMapping("/follower/list/{userId}")
     public List<FollowerListResponseDto> followerList(@PathVariable Long userId){
         return userService.followerList(userId);
     }
