@@ -5,6 +5,7 @@ import antmanclub.cut4userver.likes.domain.Likes;
 import antmanclub.cut4userver.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
+@Data
 public class Posts extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +40,7 @@ public class Posts extends BaseTimeEntity{
     @ElementCollection
     private List<String> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostsHashtag> postsHashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")

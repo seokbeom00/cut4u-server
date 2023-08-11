@@ -10,5 +10,4 @@ public class Cut4uServerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(Cut4uServerApplication.class, args);
 	}
-
 }

@@ -1,64 +1,68 @@
 package antmanclub.cut4userver.user.controller;
 
-import antmanclub.cut4userver.user.dto.JoinDto;
-import antmanclub.cut4userver.user.dto.LoginDto;
-import antmanclub.cut4userver.user.dto.UserDto;
-import antmanclub.cut4userver.user.service.UserServiceImpl;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import antmanclub.cut4userver.aws.AwsUpload;
+import antmanclub.cut4userver.user.dto.*;
+import antmanclub.cut4userver.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/user")
 public class UserController {
+    private final UserService userService;
+    private final AwsUpload awsUpload;
 
-    private final UserServiceImpl userService;
-
-    @Autowired
-    public UserController(UserServiceImpl userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping("/")
-    public String home(){
-        return "home";
-    }
-
-    @GetMapping("/join")
-    public String joinForm(){
-        return "join";
+    @PostMapping("/login")
+    public SuccessResponseDto login(@RequestBody LoginRequestDto loginRequestDto){
+        return userService.login(loginRequestDto);
     }
 
     @PostMapping("/join")
-    public String join(JoinDto joinDto){
-        userService.join(joinDto);
-
-        return "redirect:/";
+    public SuccessResponseDto join(@RequestBody JoinRequestDto requestDto){
+        return userService.join(requestDto);
     }
 
-    @GetMapping("/login")
-    public String loginForm(){
-        return "login";
+    @GetMapping("/duplecheck/{email}")
+    public SuccessResponseDto emailDupleCheck(@PathVariable String email){
+        return userService.emailDupleCheck(email);
     }
 
-    @PostMapping("/login")
-    public String login(LoginDto loginDto){
-        userService.login(loginDto);
-
-        return "redirect:/";
+    @PatchMapping(path="/editProfile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public UserProfileUpdateResponseDto editProfile(@RequestParam(value="image") MultipartFile image,
+                                                    @RequestParam(value="name") String name,
+                                                    @RequestParam(value = "email") String email)
+            throws IOException {
+        String imgSrc = awsUpload.upload(image, "image");
+        return userService.editProfile(UserProfileUpdateRequestDto.builder()
+                .name(name)
+                .email(email)
+                .profileimg(imgSrc)
+                .build());
     }
 
-    @ResponseBody   // Long 타입을 리턴하고 싶은 경우 붙여야 함 (Long - 객체)
-    @PostMapping(value="/user/edit",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String saveDiary(HttpServletRequest request, UserDto userDto) throws IOException {
-        userService.editProfile(userDto);
-        return "redirect:/";
+    @PostMapping("/follow")
+    public SuccessResponseDto userFollow(@RequestBody UserFollowRequestDto userFollowRequestDto){
+        return userService.userFollow(userFollowRequestDto);
+    }
+
+    @DeleteMapping("/unfollow")
+    public SuccessResponseDto userUnfollow(@RequestBody UserFollowRequestDto userFollowRequestDto){
+        return userService.userUnfollow(userFollowRequestDto);
+    }
+
+    @GetMapping("/following/list/{userId}")
+    public List<FollowingListResponseDto> followingList(@PathVariable Long userId){
+        return userService.followingList(userId);
+    }
+
+    @GetMapping("/follower/list/{userId}")
+    public List<FollowerListResponseDto> followerList(@PathVariable Long userId){
+        return userService.followerList(userId);
     }
 }

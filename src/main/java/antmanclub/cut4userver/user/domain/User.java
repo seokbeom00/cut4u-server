@@ -5,12 +5,10 @@ import antmanclub.cut4userver.comment.domain.Comment;
 import antmanclub.cut4userver.follow.domain.Follow;
 import antmanclub.cut4userver.likes.domain.Likes;
 import antmanclub.cut4userver.posts.domain.Posts;
-import antmanclub.cut4userver.posts.domain.PostsHashtag;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -47,4 +45,14 @@ public class User {
 
     @OneToMany(mappedBy = "followee")
     private List<Follow> followers = new ArrayList<>();
+
+    public void addFollowing(Follow follow){
+        following.add(follow);
+    }
+
+    public void addFollower(Follow follow){
+        followers.add(follow);
+    }
+
+    public void addPosts(Posts posts){ postsList.add(posts); }
 }

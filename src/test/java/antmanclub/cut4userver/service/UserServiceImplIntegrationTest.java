@@ -1,9 +1,9 @@
 package antmanclub.cut4userver.service;
 
 import antmanclub.cut4userver.user.domain.User;
-import antmanclub.cut4userver.user.dto.JoinDto;
-import antmanclub.cut4userver.user.dto.LoginDto;
-import antmanclub.cut4userver.user.dto.UserDto;
+import antmanclub.cut4userver.user.dto.TsDto.JoinDto;
+import antmanclub.cut4userver.user.dto.TsDto.LoginDto;
+import antmanclub.cut4userver.user.dto.TsDto.UserDto;
 import antmanclub.cut4userver.user.repository.UserRepository;
 import antmanclub.cut4userver.user.service.UserServiceImpl;
 import org.assertj.core.api.Assertions;
@@ -24,6 +24,7 @@ class UserServiceImplIntegrationTest {
     @Autowired UserRepository userRepository;
 
     @Test
+    @Commit
     void join() {
         //given
         JoinDto user = new JoinDto();
