@@ -53,4 +53,6 @@ public class User {
     public void addFollower(Follow follow){
         followers.add(follow);
     }
+
+    public void addPosts(Posts posts){ postsList.add(posts); }
 }
