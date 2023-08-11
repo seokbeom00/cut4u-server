@@ -40,7 +40,7 @@ public class Posts extends BaseTimeEntity{
     @ElementCollection
     private List<String> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostsHashtag> postsHashtags = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")

@@ -109,12 +109,8 @@ public class PostsService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
         postsRepository.delete(deletePosts);
 
-        // delete posts-hashtag mapping
-        postsHashtagRepository.deleteByPost(deletePosts);
-
         User user = userRepository.findByEmail(currentUser.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("접속중인 유저가 존재하지 않습니다."));
-
         // get postslist by user's following users
         List<Posts> postsList = new ArrayList<>();
         user.getFollowers().stream().forEach(follow -> {
